@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IELTS Reading Practice Test 6</title>
+<style>
+  :root{
+    --blue-900:#0d2b57;
+    --blue-700:#154a91;
+    --blue-600:#1c5fb8;
+    --blue-100:#e8f0fc;
+    --blue-050:#f4f8fd;
+    --red-600:#b3261e;
+    --red-050:#fdecec;
+    --ink:#152238;
+    --ink-soft:#4c5a70;
+    --line:#d7e0ee;
+    --white:#ffffff;
+    --radius:6px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:"Source Sans 3","Segoe UI",Helvetica,Arial,sans-serif;
+    background:var(--white); color:var(--ink); line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{ font-family:"Source Serif 4","Georgia",serif; font-weight:600; color:var(--blue-900); margin:0 0 .4em 0; }
+  ::selection{ background:#bcd6fb; }
+  .hidden{ display:none !important; }
+  button{ font-family:inherit; cursor:pointer; }
+
+  #topbar{
+    position:sticky; top:0; z-index:50; background:var(--white); border-bottom:1px solid var(--line);
+    display:flex; align-items:center; justify-content:space-between; padding:10px 22px; gap:16px; flex-wrap:wrap;
+  }
+  #topbar .brand{ display:flex; align-items:baseline; gap:10px; }
+  #topbar .brand small{ color:var(--ink-soft); font-size:.8rem; letter-spacing:.02em; }
+  #timerWrap{ display:flex; align-items:center; gap:8px; font-variant-numeric:tabular-nums; }
+  #timerLabel{ font-size:.78rem; color:var(--ink-soft); }
+  #timerDisplay{
+    font-size:1.25rem; font-weight:700; color:var(--blue-700); border:1px solid var(--blue-100);
+    background:var(--blue-050); padding:4px 12px; border-radius:var(--radius); min-width:82px; text-align:center;
+  }
+  #timerDisplay.warning{ color:var(--red-600); background:var(--red-050); border-color:#f3caca; }
+
+  #sectionNav{ display:flex; gap:6px; padding:10px 22px; border-bottom:1px solid var(--line); background:var(--blue-050); flex-wrap:wrap; }
+  .navBtn{ border:1px solid var(--line); background:var(--white); color:var(--blue-700); padding:7px 14px; border-radius:999px; font-size:.88rem; font-weight:600; }
+  .navBtn[disabled]{ opacity:.45; cursor:not-allowed; }
+  .navBtn.active{ background:var(--blue-600); color:var(--white); border-color:var(--blue-600); }
+  #submitBtn{ margin-left:auto; background:var(--red-600); color:var(--white); border:1px solid var(--red-600); padding:7px 16px; border-radius:999px; font-weight:700; font-size:.88rem; }
+  #submitBtn:hover{ background:#951d17; }
+
+  #content{ max-width:1300px; margin:0 auto; padding:20px 22px 80px; }
+  .test-section{ animation:fade .25s ease; }
+  @keyframes fade{ from{opacity:0} to{opacity:1} }
+
+  .section-head{ display:flex; justify-content:space-between; align-items:flex-end; border-bottom:2px solid var(--blue-900); padding-bottom:8px; margin-bottom:14px; flex-wrap:wrap; gap:10px; }
+  .section-head .qrange{ color:var(--ink-soft); font-size:.9rem; }
+
+  .toolbar{ display:flex; gap:8px; margin-bottom:12px; }
+  .tbtn{ border:1px solid var(--line); background:var(--white); color:var(--blue-700); padding:5px 12px; border-radius:var(--radius); font-size:.82rem; font-weight:600; }
+  .tbtn.on{ background:var(--blue-600); color:var(--white); border-color:var(--blue-600); }
+  mark.hl{ background:#ffe07a; padding:0 1px; border-radius:2px; }
+
+  .twoCol{ display:grid; grid-template-columns: 1.15fr 1fr; gap:20px; align-items:start; }
+  .passageCol, .questionsCol{
+    max-height:calc(100vh - 165px); overflow-y:auto; border:1px solid var(--line); border-radius:var(--radius);
+    padding:18px 20px; background:var(--white);
+  }
+  .passageCol{ background:#fbfcfe; }
+  .passageCol h2{ font-size:1.15rem; }
+  .passageCol p{ margin:0 0 12px; font-size:.94rem; }
+  .passageCol p strong.para{ color:var(--blue-700); }
+
+  .qblock{ border:1px solid var(--line); border-radius:var(--radius); padding:14px 16px; margin-bottom:14px; background:var(--white); }
+  .qblock h3{ font-size:.95rem; margin-bottom:8px; color:var(--ink); font-family:inherit; font-weight:700; }
+  .qsub{ color:var(--ink-soft); font-size:.82rem; margin:-2px 0 10px; }
+
+  .headingList{ border:1px dashed var(--line); border-radius:var(--radius); background:var(--blue-050); padding:10px 14px; margin-bottom:12px; font-size:.85rem; }
+  .headingList div{ margin:2px 0; }
+  .headingList b{ color:var(--blue-700); }
+
+  .fillLine{ margin:8px 0; display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+  .fillLine .qnum{ display:inline-flex; align-items:center; justify-content:center; min-width:22px; height:22px; border-radius:50%; background:var(--blue-900); color:var(--white); font-size:.72rem; font-weight:700; flex:none; }
+  .fillLine label{ flex:1 1 auto; font-size:.9rem; }
+  .fillLine input[type=text]{ border:none; border-bottom:2px solid var(--blue-600); background:transparent; font-size:.92rem; padding:3px 4px; width:160px; font-family:inherit; color:var(--ink); }
+  .fillLine input[type=text]:focus{ outline:none; border-color:var(--blue-900); }
+  select.matchSel{ border:1px solid var(--blue-600); border-radius:4px; padding:4px 6px; font-family:inherit; font-size:.88rem; color:var(--ink); background:var(--white); }
+  input[disabled], select[disabled]{ background:#f6f7f9; color:var(--ink-soft); }
+
+  .optionRow{ display:flex; flex-direction:column; gap:6px; margin:6px 0 4px 4px; }
+  .optionRow label{ display:flex; gap:8px; align-items:flex-start; font-size:.88rem; }
+  .optionRow input{ margin-top:3px; }
+
+  .tableGrid{ display:grid; grid-template-columns: 1fr 1fr 1fr; gap:2px; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; margin-bottom:6px; font-size:.86rem; }
+  .tableGrid > div{ padding:8px 10px; background:var(--white); }
+  .tableGrid > div.hd{ background:var(--blue-100); font-weight:700; }
+  .tableGrid input[type=text]{ border:none; border-bottom:2px solid var(--blue-600); background:transparent; font-size:.86rem; padding:2px 4px; width:100%; font-family:inherit; color:var(--ink); }
+
+  .footNav{ display:flex; justify-content:space-between; margin-top:16px; }
+  .footNav button{ background:var(--white); border:1px solid var(--blue-600); color:var(--blue-700); padding:8px 18px; border-radius:999px; font-weight:600; }
+  .footNav button:hover{ background:var(--blue-100); }
+  .footNav button[disabled]{ opacity:.4; cursor:not-allowed; }
+
+  #landing{ max-width:640px; margin:60px auto; text-align:left; }
+  #landing ul{ color:var(--ink-soft); padding-left:20px; }
+  #landing li{ margin-bottom:6px; }
+  #startBtn{ background:var(--blue-600); color:var(--white); border:none; padding:12px 26px; border-radius:999px; font-weight:700; font-size:1rem; margin-top:16px; }
+  #startBtn:hover{ background:var(--blue-900); }
+  .noteRed{ color:var(--red-600); font-size:.85rem; }
+
+  #results{ max-width:900px; margin:0 auto; }
+  #results .scoreCard{ background:var(--blue-050); border:1px solid var(--blue-100); border-radius:var(--radius); padding:22px; text-align:center; margin-bottom:24px; }
+  #results .scoreCard .big{ font-size:2.4rem; font-weight:800; color:var(--blue-900); }
+  .reviewRow{ display:flex; gap:10px; padding:8px 4px; border-bottom:1px solid var(--line); font-size:.9rem; align-items:flex-start; flex-wrap:wrap; }
+  .reviewRow .num{ font-weight:700; width:28px; flex:none; }
+  .reviewRow .yourAns{ min-width:140px; }
+  .reviewRow .correct{ color:#1a7a3c; }
+  .reviewRow .wrong{ color:var(--red-600); text-decoration:line-through; }
+  .tag{ font-size:.72rem; font-weight:700; padding:1px 8px; border-radius:999px; flex:none; }
+  .tag.ok{ background:#e5f6ea; color:#1a7a3c; }
+  .tag.no{ background:var(--red-050); color:var(--red-600); }
+
+  @media (max-width:900px){
+    .twoCol{ grid-template-columns: 1fr; }
+    .passageCol, .questionsCol{ max-height:none; }
+    .tableGrid{ grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="brand">
+    <h1 style="font-size:1.15rem;margin:0;">IELTS Reading Practice Test 6</h1>
+    <small>Academic — 3 passages</small>
+  </div>
+  <div id="timerWrap" class="hidden">
+    <span id="timerLabel">TIME REMAINING</span>
+    <span id="timerDisplay">60:00</span>
+  </div>
+</div>
+
+<nav id="sectionNav" class="hidden">
+  <button class="navBtn" data-target="passage1">Passage 1</button>
+  <button class="navBtn" data-target="passage2">Passage 2</button>
+  <button class="navBtn" data-target="passage3">Passage 3</button>
+  <button id="submitBtn">Submit test</button>
+</nav>
+
+<div id="content">
+
+  <!-- LANDING -->
+  <section id="landing">
+    <h2>Before you begin</h2>
+    <ul>
+      <li>The test has <strong>3 reading passages</strong> and <strong>40 questions</strong>.</li>
+      <li>You have <strong>60 minutes</strong> in total. The timer starts as soon as you click Start and cannot be paused. Your test is submitted automatically when time runs out.</li>
+      <li>You can submit at any time before that using the Submit button at the top of the page.</li>
+      <li>You can move between passages freely and return to earlier ones.</li>
+      <li>Select any text in a passage or question to highlight it, the same as on the real test paper.</li>
+      <li>After you submit, you'll see your score and the correct answers for every question.</li>
+    </ul>
+    <button id="startBtn">Start test</button>
+  </section>
+
+  <!-- PASSAGE 1 -->
+  <section id="passage1" class="test-section hidden">
+    <div class="section-head"><h2>Passage 1</h2><span class="qrange">Questions 1–13</span></div>
+    <div class="toolbar"><button class="tbtn" data-highlight-toggle>🖊 Highlight mode: off</button></div>
+
+    <div class="twoCol">
+      <div class="passageCol" data-highlight-zone>
+        <h2>Nutmeg – a valuable spice</h2>
+        <p>The nutmeg tree, Myristica fragrans, is a large evergreen tree native to Southeast Asia. Until the late 18th century, it only grew in one place in the world: a small group of islands in the Banda Sea, part of the Moluccas – or Spice Islands – in northeastern Indonesia. The tree is thickly branched with dense foliage of tough, dark green oval leaves, and produces small, yellow, bell-shaped flowers and pale yellow pear-shaped fruits. The fruit is encased in a flesh husk. When the fruit is ripe, this husk splits into two halves along a ridge running the length of the fruit. Inside is a purple-brown shiny seed, 2-3 cm long by about 2 cm across, surrounded by a lacy red or crimson covering called an 'aril'. These are the sources of the two spices nutmeg and mace, the former being produced from the dried seed and the latter from the aril.</p>
+        <p>Nutmeg was a highly prized and costly ingredient in European cuisine in the Middle Ages, and was used as a flavouring, medicinal, and preservative agent. Throughout this period, the Arabs were the exclusive importers of the spice to Europe. They sold nutmeg for high prices to merchants based in Venice, but they never revealed the exact location of the source of this extremely valuable commodity. The Arab-Venetian dominance of the trade finally ended in 1512, when the Portuguese reached the Banda Islands and began exploiting its precious resources.</p>
+        <p>Always in danger of competition from neighbouring Spain, the Portuguese began subcontracting their spice distribution to Dutch traders. Profits began to flow into the Netherlands, and the Dutch commercial fleet swiftly grew into one of the largest in the world. The Dutch quietly gained control of most of the shipping and trading of spices in Northern Europe. Then, in 1580, Portugal fell under Spanish rule, and by the end of the 16th century the Dutch found themselves locked out of the market. As prices for pepper, nutmeg, and other spices soared across Europe, they decided to fight back.</p>
+        <p>In 1602, Dutch merchants founded the VOC, a trading corporation better known as the Dutch East India Company. By 1617, the VOC was the richest commercial operation in the world. The company had 50,000 employees worldwide, with a private army of 30,000 men and a fleet of 200 ships. At the same time, thousands of people across Europe were dying of the plague, a highly contagious and deadly disease. Doctors were desperate for a way to stop the spread of this disease, and they decided nutmeg held the cure. Everybody wanted nutmeg, and many were willing to spare no expense to have it. Nutmeg bought for a few pennies in Indonesia could be sold for 68,000 times its original cost on the streets of London. The only problem was the short supply. And that's where the Dutch found their opportunity.</p>
+        <p>The Banda Islands were ruled by local sultans who insisted on maintaining a neutral trading policy towards foreign powers. This allowed them to avoid the presence of Portuguese or Spanish troops on their soil, but it also left them unprotected from other invaders. In 1621, the Dutch arrived and took over. Once securely in control of the Bandas, the Dutch went to work protecting their new investment. They concentrated all nutmeg production into a few easily guarded areas, uprooting and destroying any trees outside the plantation zones. Anyone caught growing a nutmeg seedling or carrying seeds without the proper authority was severely punished. In addition, all exported nutmeg was covered with lime to make sure there was no chance a fertile seed which could be grown elsewhere would leave the islands. There was only one obstacle to Dutch domination. One of the Banda Islands, a sliver of land called Run, only 3 km long by less than 1 km wide, was under the control of the British. After decades of fighting for control of this tiny island, the Dutch and British arrived at a compromise settlement, the Treaty of Breda, in 1667. Intent on securing their hold over every nutmeg-producing island, the Dutch offered a trade: if the British would give them the island of Run, they would in turn give Britain a distant and much less valuable island in North America. The British agreed. That other island was Manhattan, which is how New Amsterdam became New York. The Dutch now had a monopoly over the nutmeg trade which would last for another century.</p>
+        <p>Then, in 1770, a Frenchman named Pierre Poivre successfully smuggled nutmeg plants to safety in Mauritius, an island off the coast of Africa. Some of these were later exported to the Caribbean where they thrived, especially on the island of Grenada. Next, in 1778, a volcanic eruption in the Banda region caused a tsunami that wiped out half the nutmeg groves. Finally, in 1809, the British returned to Indonesia and seized the Banda Islands by force. They returned the islands to the Dutch in 1817, but not before transplanting hundreds of nutmeg seedlings to plantations in several locations across southern Asia. The Dutch nutmeg monopoly was over.</p>
+        <p>Today, nutmeg is grown in Indonesia, the Caribbean, India, Malaysia, Papua New Guinea and Sri Lanka, and world nutmeg production is estimated to average between 10,000 and 12,000 tonnes per year.</p>
+      </div>
+
+      <div class="questionsCol" data-highlight-zone>
+        <div class="qblock">
+          <h3>Questions 1–4</h3>
+          <p class="qsub">Complete the notes below. Choose ONE WORD ONLY from the passage for each answer.</p>
+          <p style="font-weight:700;font-size:.92rem;">The nutmeg tree and fruit</p>
+          <div class="fillLine"><label>the leaves of the tree are</label><span class="qnum">1</span><input type="text" data-q="1"><label>in shape</label></div>
+          <div class="fillLine"><label>the</label><span class="qnum">2</span><input type="text" data-q="2"><label>surrounds the fruit and breaks open when the fruit is ripe</label></div>
+          <div class="fillLine"><label>the</label><span class="qnum">3</span><input type="text" data-q="3"><label>is used to produce the spice nutmeg</label></div>
+          <div class="fillLine"><label>the covering known as the aril is used to produce</label><span class="qnum">4</span><input type="text" data-q="4"></div>
+          <div class="fillLine"><label>the tree has yellow flowers and fruit</label></div>
+        </div>
+
+        <div class="qblock">
+          <h3>Questions 5–7</h3>
+          <p class="qsub">Do the following statements agree with the information given in the Reading Passage?</p>
+          <div class="fillLine"><span class="qnum">5</span><label>In the Middle Ages, most Europeans knew where nutmeg was grown.</label><select class="matchSel" data-q="5"><option value="">–</option><option>TRUE</option><option>FALSE</option><option>NOT GIVEN</option></select></div>
+          <div class="fillLine"><span class="qnum">6</span><label>The VOC was the world's first major trading company.</label><select class="matchSel" data-q="6"><option value="">–</option><option>TRUE</option><option>FALSE</option><option>NOT GIVEN</option></select></div>
+          <div class="fillLine"><span class="qnum">7</span><label>Following the Treaty of Breda, the Dutch had control of all the islands where nutmeg grew.</label><select class="matchSel" data-q="7"><option value="">–</option><option>TRUE</option><option>FALSE</option><option>NOT GIVEN</option></select></div>
+        </div>
+
+        <div class="qblock">
+          <h3>Questions 8–13</h3>
+          <p class="qsub">Complete the table below. Choose ONE WORD ONLY from the passage for each answer.</p>
+          <div class="tableGrid">
+            <div class="hd">Period</div><div class="hd" style="grid-column: span 2;">Events</div>
+            <div>Middle Ages</div><div style="grid-column: span 2;">Nutmeg was brought to Europe by the <span class="qnum" style="margin:0 4px;">8</span><input type="text" data-q="8" style="width:120px;"></div>
+            <div>16th century</div><div style="grid-column: span 2;">European nations took control of the nutmeg trade</div>
+            <div>17th century</div><div style="grid-column: span 2;">Demand for nutmeg grew, as it was believed to be effective against the disease known as the <span class="qnum" style="margin:0 4px;">9</span><input type="text" data-q="9" style="width:110px;"><br>The Dutch – took control of the Banda Islands; restricted nutmeg production to a few areas; put <span class="qnum" style="margin:0 4px;">10</span><input type="text" data-q="10" style="width:100px;"> on nutmeg to avoid it being cultivated outside the islands; finally obtained the island of <span class="qnum" style="margin:0 4px;">11</span><input type="text" data-q="11" style="width:100px;"> from the British</div>
+            <div>Late 18th century</div><div style="grid-column: span 2;">1770 – nutmeg plants were secretly taken to <span class="qnum" style="margin:0 4px;">12</span><input type="text" data-q="12" style="width:120px;"><br>1778 – half the Banda Islands' nutmeg plantations were destroyed by a <span class="qnum" style="margin:0 4px;">13</span><input type="text" data-q="13" style="width:100px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footNav"><button disabled>← Previous</button><button data-nextsection="passage2">Next: Passage 2 →</button></div>
+  </section>
+
+  <!-- PASSAGE 2 -->
+  <section id="passage2" class="test-section hidden">
+    <div class="section-head"><h2>Passage 2</h2><span class="qrange">Questions 14–26</span></div>
+    <div class="toolbar"><button class="tbtn" data-highlight-toggle>🖊 Highlight mode: off</button></div>
+
+    <div class="twoCol">
+      <div class="passageCol" data-highlight-zone>
+        <h2>Driverless cars</h2>
+        <p><strong class="para">(A)</strong> The automotive sector is well used to adapting to automation in manufacturing. The implementation of robotic car manufacture from the 1970s onwards led to significant cost savings and improvements in the reliability and flexibility of vehicle mass production. A new challenge to vehicle production is now on the horizon and, again, it comes from automation. However, this time it is not to do with the manufacturing process, but with the vehicles themselves.</p>
+        <p>Research projects on vehicle automation are not new. Vehicles with limited self-driving capabilities have been around for more than 50 years, resulting in significant contributions towards driver assistance systems. But since Google announced in 2010 that it had been trialling self-driving cars on the streets of California, progress in this field has quickly gathered pace.</p>
+        <p><strong class="para">(B)</strong> There are many reasons why technology is advancing so fast. One frequently cited motive is safety; indeed, research at the UK's Transport Research Laboratory has demonstrated that more than 90 percent of road collisions involve human error as a contributory factor, and it is the primary cause in the vast majority. Automation may help to reduce the incidence of this.</p>
+        <p>Another aim is to free the time people spend driving for other purposes. If the vehicle can do some or all of the driving, it may be possible to be productive, to socialise or simply to relax while automation systems have responsibility for safe control of the vehicle. If the vehicle can do the driving, those who are challenged by existing mobility models – such as older or disabled travellers – may be able to enjoy significantly greater travel autonomy.</p>
+        <p><strong class="para">(C)</strong> Beyond these direct benefits, we can consider the wider implications for transport and society, and how manufacturing processes might need to respond as a result. At present, the average car spends more than 90 percent of its life parked. Automation means that initiatives for car-sharing become much more viable, particularly in urban areas with significant travel demand. If a significant proportion of the population choose to use shared automated vehicles, mobility demand can be met by far fewer vehicles.</p>
+        <p><strong class="para">(D)</strong> The Massachusetts Institute of Technology investigated automated mobility in Singapore, finding that fewer than 30 percent of the vehicles currently used would be required if fully automated car sharing could be implemented. If this is the case, it might mean that we need to manufacture far fewer vehicles to meet demand. However, the number of trips being taken would probably increase, partly because empty vehicles would have to be moved from one customer to the next. Modelling work by the University of Michigan Transportation Research Institute suggests automated vehicles might reduce vehicle ownership by 43 percent, but that vehicles' average annual mileage double as a result. As a consequence, each vehicle would be used more intensively, and might need replacing sooner. This faster rate of turnover may mean that vehicle production will not necessarily decrease.</p>
+        <p><strong class="para">(E)</strong> Automation may prompt other changes in vehicle manufacture. If we move to a model where consumers are tending not to own a single vehicle but to purchase access to a range of vehicle through a mobility provider, drivers will have the freedom to select one that best suits their needs for a particular journey, rather than making a compromise across all their requirements.</p>
+        <p>Since, for most of the time, most of the seats in most cars are unoccupied, this may boost production of a smaller, more efficient range of vehicles that suit the needs of individuals. Specialised vehicles may then be available for exceptional journeys, such as going on a family camping trip or helping a son or daughter move to university.</p>
+        <p><strong class="para">(F)</strong> There are a number of hurdles to overcome in delivering automated vehicles to our roads. These include the technical difficulties in ensuring that the vehicle works reliably in the infinite range of traffic, weather and road situations it might encounter; the regulatory challenges in understanding how liability and enforcement might change when drivers are no longer essential for vehicle operation; and the societal changes that may be required for communities to trust and accept automated vehicles as being a valuable part of the mobility landscape.</p>
+        <p><strong class="para">(G)</strong> It's clear that there are many challenges that need to be addressed but, through robust and targeted research, these can most probably be conquered within the next 10 years. Mobility will change in such potentially significant ways and in association with so many other technological developments, such as telepresence and virtual reality, that it is hard to make concrete predictions about the future. However, one thing is certain: change is coming, and the need to be flexible in response to this will be vital for those involved in manufacturing the vehicles that will deliver future mobility.</p>
+      </div>
+
+      <div class="questionsCol" data-highlight-zone>
+        <div class="qblock">
+          <h3>Questions 14–18</h3>
+          <p class="qsub">The Reading Passage has seven paragraphs, A–G. Which section contains the following information?</p>
+          <div class="fillLine"><span class="qnum">14</span><label>reference to the amount of time when a car is not in use</label><select class="matchSel" data-q="14"><option value="">–</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option></select></div>
+          <div class="fillLine"><span class="qnum">15</span><label>mention of several advantages of driverless vehicles for individual road-users</label><select class="matchSel" data-q="15"><option value="">–</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option></select></div>
+          <div class="fillLine"><span class="qnum">16</span><label>reference to the opportunity of choosing the most appropriate vehicle for each trip</label><select class="matchSel" data-q="16"><option value="">–</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option></select></div>
+          <div class="fillLine"><span class="qnum">17</span><label>an estimate of how long it will take to overcome a number of problems</label><select class="matchSel" data-q="17"><option value="">–</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option></select></div>
+          <div class="fillLine"><span class="qnum">18</span><label>a suggestion that the use of driverless cars may have no effect on the number of vehicles manufactured</label><select class="matchSel" data-q="18"><option value="">–</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option></select></div>
+        </div>
+
+        <div class="qblock">
+          <h3>Questions 19–22</h3>
+          <p class="qsub">Complete the summary below. Choose NO MORE THAN TWO WORDS from the passage for each answer.</p>
+          <p style="font-size:.9rem;line-height:1.8;">
+            The impact of driverless cars. Figures from the Transport Research Laboratory indicate that most motor accidents are partly due to
+            <span class="qnum" style="margin:0 4px;">19</span><input type="text" data-q="19" style="width:150px;">
+            , so the introduction of driverless vehicles will result in greater safety. In addition to the direct benefits of automation, it may bring other advantages. For example, schemes for
+            <span class="qnum" style="margin:0 4px;">20</span><input type="text" data-q="20" style="width:150px;">
+            will be more workable, especially in towns and cities, resulting in fewer cars on the road. According to the University of Michigan Transportation Research Institute, there could be a 43 percent drop in
+            <span class="qnum" style="margin:0 4px;">21</span><input type="text" data-q="21" style="width:130px;">
+            of cars. However, this would mean that the yearly
+            <span class="qnum" style="margin:0 4px;">22</span><input type="text" data-q="22" style="width:130px;">
+            of each car would, on average, be twice as high as it currently is. This would lead to a higher turnover of vehicles, and therefore no reduction in automotive manufacturing.
+          </p>
+        </div>
+
+        <div class="qblock">
+          <h3>Questions 23–24</h3>
+          <p class="qsub">Choose TWO letters, A–E. Which TWO benefits of automated vehicles does the writer mention?</p>
+          <div class="optionRow">
+            <label><input type="checkbox" data-qgroup="23-24" value="A"> A &nbsp;Car travellers could enjoy considerable cost savings.</label>
+            <label><input type="checkbox" data-qgroup="23-24" value="B"> B &nbsp;It would be easier to find parking spaces in urban areas.</label>
+            <label><input type="checkbox" data-qgroup="23-24" value="C"> C &nbsp;Travellers could spend journeys doing something other than driving.</label>
+            <label><input type="checkbox" data-qgroup="23-24" value="D"> D &nbsp;People who find driving physically difficult could travel independently.</label>
+            <label><input type="checkbox" data-qgroup="23-24" value="E"> E &nbsp;A reduction in the number of cars would mean a reduction in pollution.</label>
+          </div>
+        </div>
+
+        <div class="qblock">
+          <h3>Questions 25–26</h3>
+          <p class="qsub">Choose TWO letters, A–E. Which TWO challenges to automated vehicle development does the writer mention?</p>
+          <div class="optionRow">
+            <label><input type="checkbox" data-qgroup="25-26" value="A"> A &nbsp;making sure the general public has confidence in automated vehicles</label>
+            <label><input type="checkbox" data-qgroup="25-26" value="B"> B &nbsp;managing the pace of transition from conventional to automated vehicles</label>
+            <label><input type="checkbox" data-qgroup="25-26" value="C"> C &nbsp;deciding how to compensate professional drivers who become redundant</label>
+            <label><input type="checkbox" data-qgroup="25-26" value="D"> D &nbsp;setting up the infrastructure to make roads suitable for automated vehicles</label>
+            <label><input type="checkbox" data-qgroup="25-26" value="E"> E &nbsp;getting automated vehicles to adapt to various different driving conditions</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footNav"><button data-prevsection="passage1">← Previous</button><button data-nextsection="passage3">Next: Passage 3 →</button></div>
+  </section>
+
+  <!-- PASSAGE 3 -->
+  <section id="passage3" class="test-section hidden">
+    <div class="section-head"><h2>Passage 3</h2><span class="qrange">Questions 27–40</span></div>
+    <div class="toolbar"><button class="tbtn" data-highlight-toggle>🖊 Highlight mode: off</button></div>
+
+    <div class="twoCol">
+      <div class="passageCol" data-highlight-zone>
+        <h2>What is exploration?</h2>
+        <p>We are all explorers. Our desire to discover, and then share that new-found knowledge, is part of what makes us human – indeed, this has played an important part in our success as a species. Long before the first caveman slumped down beside the fire and grunted news that there were plenty of wildebeest over yonder, our ancestors had learnt the value of sending out scouts to investigate the unknown. This questing nature of ours undoubtedly helped our species spread around the globe, just as it nowadays no doubt helps the last nomadic Penan maintain their existence in the depleted forests of Borneo, and a visitor negotiate the subways of New York.</p>
+        <p>Over the years, we've come to think of explorers as a peculiar breed – different from the rest of us, different from those of us who are merely 'well travelled', even; and perhaps there is a type of person more suited to seeking out the new, a type of caveman more inclined to risk venturing out. That, however, doesn't take away from the fact that we all have this enquiring instinct, even today; and that in all sorts of professions – whether artist, marine biologist or astronomer – borders of the unknown are being tested each day.</p>
+        <p>Thomas Hardy set some of his novels in Egdon Heath, a fictional area of uncultivated land, and used the landscape to suggest the desires and fears of his characters. He is delving into matters we all recognise because they are common to humanity. This is surely an act of exploration, and into a world as remote as the author chooses. Explorer and travel writer Peter Fleming talks of the moment when the explorer returns to the existence he has left behind with his loved ones. The traveller 'who has for weeks or months seen himself only as a puny and irrelevant alien crawling laboriously over a country in which he has no roots and no background, suddenly encounters his other self, a relatively solid figure, with a place in the minds of certain people'.</p>
+        <p>In this book about the exploration of the earth's surface, I have confined myself to those whose travels were real and who also aimed at more than personal discovery. But that still left me with another problem: the word 'explorer' has become associated with a past era. We think back to a golden age, as if exploration peaked somehow in the 19th century – as if the process of discovery is now on the decline, though the truth is that we have named only one and a half million of this planet's species, and there may be more than 10 million – and that's not including bacteria. We have studied only 5 per cent of the species we know. We have scarcely mapped the ocean floors, and know even less about ourselves; we fully understand the workings of only 10 per cent of our brains.</p>
+        <p>Here is how some of today's 'explorers' define the word. Ran Fiennes, dubbed the 'greatest living explorer', said, 'An explorer is someone who has done something that no human has done before – and also done something scientifically useful.' Chris Bonington, a leading mountaineer, felt exploration was to be found in the act of physically touching the unknown: 'You have to have gone somewhere new.' Then Robin Hanbury-Tenison, a campaigner on behalf of remote so-called 'tribal' peoples, said, 'A traveller simply records information about some far-off world, and reports back; but an explorer changes the world.' Wilfred Thesiger, who crossed Arabia's Empty Quarter in 1946, and belongs to an era of unmechanised travel now lost to the rest of us, told me, 'If I'd gone across by camel when I could have gone by car, it would have been a stunt.' To him, exploration meant bringing back information from a remote place regardless of any great self-discovery.</p>
+        <p>Each definition is slightly different – and tends to reflect the field of endeavour of each pioneer. It was the same whoever I asked: the prominent historian would say exploration was a thing of the past, the cutting-edge scientist would say it was of the present. And so on. They each set their own particular criteria; the common factor in their approach being that they all had, unlike many of us who simply enjoy travel or discovering new things, both a very definite objective from the outset and also a desire to record their findings.</p>
+        <p>I'd best declare my own bias. As a writer, I'm interested in the exploration of ideas. I've done a great many expeditions and each one was unique. I've lived for months alone with isolated groups of people all around the world, even two 'uncontacted tribes'. But none of these things is of the slightest interest to anyone unless, through my books, I've found a new slant, explored a new idea. Why? Because the world has moved on. The time has long passed for the great continental voyages – another walk to the poles, another crossing of the Empty Quarter. We know how the land surface of our planet lies; exploration of it is now down to the details – the habits of microbes, say, or the grazing behaviour of buffalo. Aside from the deep sea and deep underground, it's the era of specialists. However, this is to disregard the role the human mind has in conveying remote places; and this is what interests me: how a fresh interpretation, even of a well-travelled route, can give its readers new insights.</p>
+      </div>
+
+      <div class="questionsCol" data-highlight-zone>
+        <div class="qblock">
+          <h3>Questions 27–32</h3>
+          <p class="qsub">Choose the correct letter, A, B, C or D.</p>
+          <p style="font-size:.9rem;"><strong>27</strong> The writer refers to visitors to New York to illustrate the point that</p>
+          <div class="optionRow">
+            <label><input type="radio" name="q27" data-q="27" value="A"> A &nbsp;exploration is an intrinsic element of being human.</label>
+            <label><input type="radio" name="q27" data-q="27" value="B"> B &nbsp;most people are enthusiastic about exploring.</label>
+            <label><input type="radio" name="q27" data-q="27" value="C"> C &nbsp;exploration can lead to surprising results.</label>
+            <label><input type="radio" name="q27" data-q="27" value="D"> D &nbsp;most people find exploration daunting.</label>
+          </div>
+          <p style="font-size:.9rem;margin-top:12px;"><strong>28</strong> According to the second paragraph, what is the writer's view of explorers?</p>
+          <div class="optionRow">
+            <label><input type="radio" name="q28" data-q="28" value="A"> A &nbsp;Their discoveries have brought both benefits and disadvantages.</label>
+            <label><input type="radio" name="q28" data-q="28" value="B"> B &nbsp;Their main value is in teaching others.</label>
+            <label><input type="radio" name="q28" data-q="28" value="C"> C &nbsp;They act on an urge that is common to everyone.</label>
+            <label><input type="radio" name="q28" data-q="28" value="D"> D &nbsp;They tend to be more attracted to certain professions than to others.</label>
+          </div>
+          <p style="font-size:.9rem;margin-top:12px;"><strong>29</strong> The writer refers to a description of Egdon Heath to suggest that</p>
+          <div class="optionRow">
+            <label><input type="radio" name="q29" data-q="29" value="A"> A &nbsp;Hardy was writing about his own experience of exploration.</label>
+            <label><input type="radio" name="q29" data-q="29" value="B"> B &nbsp;Hardy was mistaken about the nature of exploration.</label>
+            <label><input type="radio" name="q29" data-q="29" value="C"> C &nbsp;Hardy's aim was to investigate people's emotional states.</label>
+            <label><input type="radio" name="q29" data-q="29" value="D"> D &nbsp;Hardy's aim was to show the attraction of isolation.</label>
+          </div>
+          <p style="font-size:.9rem;margin-top:12px;"><strong>30</strong> In the fourth paragraph, the writer refers to 'a golden age' to suggest that</p>
+          <div class="optionRow">
+            <label><input type="radio" name="q30" data-q="30" value="A"> A &nbsp;the amount of useful information produced by exploration has decreased.</label>
+            <label><input type="radio" name="q30" data-q="30" value="B"> B &nbsp;fewer people are interested in exploring than in the 19th century.</label>
+            <label><input type="radio" name="q30" data-q="30" value="C"> C &nbsp;recent developments have made exploration less exciting.</label>
+            <label><input type="radio" name="q30" data-q="30" value="D"> D &nbsp;we are wrong to think that exploration is no longer necessary.</label>
+          </div>
+          <p style="font-size:.9rem;margin-top:12px;"><strong>31</strong> In the sixth paragraph, when discussing the definition of exploration, the writer argues that</p>
+          <div class="optionRow">
+            <label><input type="radio" name="q31" data-q="31" value="A"> A &nbsp;people tend to relate exploration to their own professional interests.</label>
+            <label><input type="radio" name="q31" data-q="31" value="B"> B &nbsp;certain people are likely to misunderstand the nature of exploration.</label>
+            <label><input type="radio" name="q31" data-q="31" value="C"> C &nbsp;the generally accepted definition has changed over time.</label>
+            <label><input type="radio" name="q31" data-q="31" value="D"> D &nbsp;historians and scientists have more valid definitions than the general public.</label>
+          </div>
+          <p style="font-size:.9rem;margin-top:12px;"><strong>32</strong> In the last paragraph, the writer explains that he is interested in</p>
+          <div class="optionRow">
+            <label><input type="radio" name="q32" data-q="32" value="A"> A &nbsp;how someone's personality is reflected in their choice of places to visit.</label>
+            <label><input type="radio" name="q32" data-q="32" value="B"> B &nbsp;the human ability to cast new light on places that may be familiar.</label>
+            <label><input type="radio" name="q32" data-q="32" value="C"> C &nbsp;how travel writing has evolved to meet changing demands.</label>
+            <label><input type="radio" name="q32" data-q="32" value="D"> D &nbsp;the feelings that writers develop about the places that they explore.</label>
+          </div>
+        </div>
+
+        <div class="qblock">
+          <h3>Questions 33–37</h3>
+          <p class="qsub">Look at the following statements and the list of explorers below. Match each statement with the correct explorer, A–E. You may use any letter more than once.</p>
+          <div class="headingList">
+            <div><b>A.</b> Peter Fleming</div>
+            <div><b>B.</b> Ran Fiennes</div>
+            <div><b>C.</b> Chris Bonington</div>
+            <div><b>D.</b> Robin Hanbury-Tenison</div>
+            <div><b>E.</b> Wilfred Thesiger</div>
+          </div>
+          <div class="fillLine"><span class="qnum">33</span><label>He referred to the relevance of the form of transport used.</label><select class="matchSel" data-q="33"><option value="">–</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option></select></div>
+          <div class="fillLine"><span class="qnum">34</span><label>He described feelings on coming back home after a long journey.</label><select class="matchSel" data-q="34"><option value="">–</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option></select></div>
+          <div class="fillLine"><span class="qnum">35</span><label>He worked for the benefit of specific groups of people.</label><select class="matchSel" data-q="35"><option value="">–</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option></select></div>
+          <div class="fillLine"><span class="qnum">36</span><label>He did not consider learning about oneself an essential part of exploration.</label><select class="matchSel" data-q="36"><option value="">–</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option></select></div>
+          <div class="fillLine"><span class="qnum">37</span><label>He defined exploration as being both unique and of value to others.</label><select class="matchSel" data-q="37"><option value="">–</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option></select></div>
+        </div>
+
+        <div class="qblock">
+          <h3>Questions 38–40</h3>
+          <p class="qsub">Complete the summary below. Choose NO MORE THAN TWO WORDS from the passage for each answer.</p>
+          <p style="font-size:.9rem;line-height:1.8;">
+            The writer's own bias. The writer has experience of a large number of
+            <span class="qnum" style="margin:0 4px;">38</span><input type="text" data-q="38" style="width:150px;">
+            , and was the first stranger that certain previously
+            <span class="qnum" style="margin:0 4px;">39</span><input type="text" data-q="39" style="width:150px;">
+            people had encountered. He believes there is no need for further exploration of Earth's
+            <span class="qnum" style="margin:0 4px;">40</span><input type="text" data-q="40" style="width:150px;">
+            , except to answer specific questions such as how buffalo eat.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footNav"><button data-prevsection="passage2">← Previous</button><button id="finalSubmitBtn">Submit test →</button></div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="results" class="hidden">
+    <div class="scoreCard">
+      <div>Your score</div>
+      <div class="big" id="scoreBig">0 / 40</div>
+      <div id="scoreNote" style="color:var(--ink-soft);font-size:.9rem;"></div>
+    </div>
+    <div id="reviewList"></div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var KEY = {
+    1:["oval"],
+    2:["husk"],
+    3:["seed"],
+    4:["mace"],
+    5:["false"], 6:["not given"], 7:["true"],
+    8:["arabs"],
+    9:["plague"],
+    10:["lime"],
+    11:["run"],
+    12:["mauritius"],
+    13:["tsunami"],
+    14:["c"], 15:["b"], 16:["e"], 17:["g"], 18:["d"],
+    19:["human error"],
+    20:["car-sharing","car sharing"],
+    21:["ownership"],
+    22:["mileage"],
+    27:["a"], 28:["c"], 29:["c"], 30:["d"], 31:["a"], 32:["b"],
+    33:["e"], 34:["a"], 35:["d"], 36:["e"], 37:["b"],
+    38:["expeditions","unique expeditions"],
+    39:["uncontacted","isolated"],
+    40:["surface","land surface"]
+  };
+  var GROUP_KEY = { "23-24": ["C","D"], "25-26": ["A","E"] };
+
+  var TOTAL_QUESTIONS = 40;
+  var TEST_SECONDS = 60 * 60;
+  var SECTIONS = ["passage1","passage2","passage3"];
+
+  var timeLeft = TEST_SECONDS;
+  var timerInterval = null;
+  var submitted = false;
+
+  function $(sel, root){ return (root||document).querySelector(sel); }
+  function $all(sel, root){ return Array.prototype.slice.call((root||document).querySelectorAll(sel)); }
+  function norm(s){ return (s||"").trim().toLowerCase().replace(/\s+/g," "); }
+
+  $("#startBtn").addEventListener("click", function(){
+    $("#landing").classList.add("hidden");
+    $("#sectionNav").classList.remove("hidden");
+    $("#timerWrap").classList.remove("hidden");
+    showSection("passage1");
+    startTimer();
+  });
+
+  function startTimer(){
+    updateTimerDisplay();
+    timerInterval = setInterval(function(){
+      timeLeft--;
+      updateTimerDisplay();
+      if (timeLeft <= 0){
+        clearInterval(timerInterval);
+        submitTest(true);
+      }
+    }, 1000);
+  }
+  function updateTimerDisplay(){
+    var m = Math.floor(timeLeft/60), s = timeLeft%60;
+    var disp = $("#timerDisplay");
+    disp.textContent = (m<10?"0":"")+m+":"+(s<10?"0":"")+s;
+    disp.classList.toggle("warning", timeLeft <= 300);
+  }
+
+  function showSection(id){
+    $all(".test-section").forEach(function(sec){ sec.classList.add("hidden"); });
+    $("#"+id).classList.remove("hidden");
+    $all(".navBtn").forEach(function(b){ b.classList.toggle("active", b.dataset.target === id); });
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+  $all(".navBtn[data-target]").forEach(function(btn){ btn.addEventListener("click", function(){ showSection(btn.dataset.target); }); });
+  $all("[data-nextsection]").forEach(function(btn){ btn.addEventListener("click", function(){ showSection(btn.dataset.nextsection); }); });
+  $all("[data-prevsection]").forEach(function(btn){ btn.addEventListener("click", function(){ showSection(btn.dataset.prevsection); }); });
+
+  $all("[data-highlight-toggle]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var zoneContainer = btn.closest(".test-section");
+      var isOn = btn.classList.toggle("on");
+      btn.textContent = isOn ? "🖊 Highlight mode: on" : "🖊 Highlight mode: off";
+      zoneContainer.dataset.highlighting = isOn ? "1" : "0";
+    });
+  });
+
+  document.addEventListener("mouseup", function(){
+    var sel = window.getSelection();
+    if (!sel || sel.isCollapsed || sel.rangeCount === 0) return;
+    var range = sel.getRangeAt(0);
+    var container = range.commonAncestorContainer;
+    var zone = (container.nodeType === 1 ? container : container.parentElement);
+    var block = zone ? zone.closest("[data-highlight-zone]") : null;
+    if (!block) return;
+    var section = block.closest(".test-section");
+    if (!section || section.dataset.highlighting !== "1") return;
+    try{
+      var mark = document.createElement("mark");
+      mark.className = "hl";
+      range.surroundContents(mark);
+      sel.removeAllRanges();
+    }catch(e){ /* selection spans multiple elements — skip (prototype limitation) */ }
+  });
+
+  function getVal(id){
+    var el = $('[data-q="'+id+'"]:not([type=radio])');
+    if (el) return el.value;
+    var radio = $('input[type=radio][data-q="'+id+'"]:checked');
+    return radio ? radio.value : "";
+  }
+
+  function gradeAndRender(){
+    var correctCount = 0;
+    var rows = [];
+    var allNums = [];
+    for (var i = 1; i <= TOTAL_QUESTIONS; i++) allNums.push(i);
+
+    var groupedNums = {};
+    Object.keys(GROUP_KEY).forEach(function(gk){
+      var parts = gk.split("-");
+      var start = parseInt(parts[0],10), end = parseInt(parts[1],10);
+      for (var n=start;n<=end;n++) groupedNums[n] = gk;
+    });
+
+    allNums.forEach(function(q){
+      if (groupedNums[q]) return; // handled separately below
+      var userVal = getVal(q);
+      var accepted = KEY[q] || [];
+      var isCorrect = accepted.some(function(a){ return norm(a) === norm(userVal); });
+      if (isCorrect) correctCount++;
+      rows.push({num:q, your:userVal, correct:accepted.join(" / "), ok:isCorrect});
+    });
+
+    Object.keys(GROUP_KEY).forEach(function(gk){
+      var parts = gk.split("-");
+      var nums = [];
+      for (var n=parseInt(parts[0],10); n<=parseInt(parts[1],10); n++) nums.push(n);
+      var checked = $all('input[type=checkbox][data-qgroup="'+gk+'"]:checked').map(function(c){return c.value;});
+      var correctSet = GROUP_KEY[gk].slice().sort();
+      var gotSet = checked.slice().sort();
+      var isCorrect = gotSet.length === correctSet.length && gotSet.every(function(v,i){return v===correctSet[i];});
+      nums.forEach(function(n){
+        if (isCorrect) correctCount++;
+        rows.push({num:n, your: checked.join(", ") || "(none)", correct: correctSet.join(" / "), ok:isCorrect});
+      });
+    });
+
+    rows.sort(function(a,b){ return a.num - b.num; });
+
+    $("#scoreBig").textContent = correctCount + " / " + TOTAL_QUESTIONS;
+    $("#scoreNote").textContent = bandNote(correctCount);
+
+    var list = $("#reviewList");
+    list.innerHTML = "";
+    rows.forEach(function(r){
+      var div = document.createElement("div");
+      div.className = "reviewRow";
+      div.innerHTML =
+        '<span class="num">'+r.num+'</span>' +
+        '<span class="tag '+(r.ok?"ok":"no")+'">'+(r.ok?"Correct":"Incorrect")+'</span>' +
+        '<span class="yourAns '+(r.ok?"correct":"wrong")+'">Your answer: '+ (r.your || "(blank)") +'</span>' +
+        (r.ok ? '' : '<span class="yourAns correct">Correct answer: '+r.correct+'</span>');
+      list.appendChild(div);
+    });
+  }
+
+  function bandNote(score){
+    if (score >= 39) return "Excellent — Band 9 range.";
+    if (score >= 35) return "Very strong — Band 8 range.";
+    if (score >= 30) return "Good — Band 7 range.";
+    if (score >= 23) return "Solid — Band 6 range.";
+    if (score >= 16) return "Fair — Band 5 range.";
+    return "Keep practising — review the passages and try again.";
+  }
+
+  function lockAllInputs(){
+    $all("input, select").forEach(function(el){ el.disabled = true; });
+  }
+
+  function submitTest(auto){
+    if (submitted) return;
+    submitted = true;
+    clearInterval(timerInterval);
+    lockAllInputs();
+    $all(".test-section").forEach(function(s){ s.classList.add("hidden"); });
+    $("#sectionNav").classList.add("hidden");
+    $("#timerWrap").classList.add("hidden");
+    $("#results").classList.remove("hidden");
+    gradeAndRender();
+    if (auto){
+      var note = document.createElement("p");
+      note.className = "noteRed";
+      note.textContent = "Time's up — your test was submitted automatically.";
+      $("#results").insertBefore(note, $("#results").firstChild);
+    }
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+
+  $("#submitBtn").addEventListener("click", function(){ confirmSubmit(); });
+  $("#finalSubmitBtn").addEventListener("click", function(){ confirmSubmit(); });
+  function confirmSubmit(){
+    if (window.confirm("Submit the test now? You won't be able to change your answers afterwards.")){
+      submitTest(false);
+    }
+  }
+
+})();
+</script>
+</body>
+</html>
